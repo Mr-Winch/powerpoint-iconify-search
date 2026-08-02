@@ -140,9 +140,31 @@
           <label for="insertSize">Size</label>
           <div class="unit-input"><input id="insertSize" type="number" min="12" max="720" step="6" value="72" /><span>pt</span></div>
         </div>
-        <div class="field-group compact-field">
-          <label for="iconColor">Color</label>
-          <input id="iconColor" type="color" value="#D24726" />
+        <div class="field-group compact-field color-field">
+          <label id="iconColorLabel" for="colorButton">Color</label>
+          <div class="color-picker-wrap" id="colorPickerWrap">
+            <button class="color-trigger" id="colorButton" type="button" aria-haspopup="dialog" aria-expanded="false">
+              <span class="color-trigger-swatch" id="colorSwatch" aria-hidden="true"></span>
+              <span class="color-trigger-value" id="colorValue">#D24726</span>
+              <span class="color-trigger-chevron" aria-hidden="true">⌄</span>
+            </button>
+            <div class="color-palette" id="colorPalette" role="dialog" aria-labelledby="iconColorLabel" hidden>
+              <section class="palette-section" aria-labelledby="themeColorsHeading">
+                <strong id="themeColorsHeading">Theme Colors</strong>
+                <div class="color-grid theme-base-grid" id="themeBaseColors" role="group" aria-label="Theme colors"></div>
+                <div class="color-grid theme-shade-grid" id="themeShadeColors" role="group" aria-label="Theme color shades"></div>
+              </section>
+              <section class="palette-section" aria-labelledby="standardColorsHeading">
+                <strong id="standardColorsHeading">Standard Colors</strong>
+                <div class="color-grid standard-color-grid" id="standardColorGrid" role="group" aria-label="Standard colors"></div>
+              </section>
+              <button class="more-colors-button" id="moreColorsButton" type="button">
+                <span class="more-colors-icon" aria-hidden="true">◉</span>
+                <span>More Colors…</span>
+              </button>
+              <input class="native-color-input" id="customColorInput" type="color" value="#D24726" tabindex="-1" aria-hidden="true" />
+            </div>
+          </div>
         </div>
         <div class="field-group compact-field png-only" id="pngResolutionField" hidden>
           <label for="pngResolution">PNG</label>

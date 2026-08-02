@@ -29,6 +29,59 @@ function luminance(color) {
   return values.reduce((sum, value, index) => sum + value * [0.2126, 0.7152, 0.0722][index], 0) / 255;
 }
 
+const THEME_COLOR_NAMES = [
+  "Light1", "Dark1", "Light2", "Dark2",
+  "Accent1", "Accent2", "Accent3", "Accent4", "Accent5", "Accent6"
+];
+
+export const DEFAULT_POWERPOINT_THEME_COLORS = Object.freeze([
+  "#FFFFFF", "#000000", "#E7E6E6", "#44546A", "#4472C4",
+  "#ED7D31", "#A5A5A5", "#FFC000", "#5B9BD5", "#70AD47"
+]);
+
+export const POWERPOINT_STANDARD_COLORS = Object.freeze([
+  "#C00000", "#FF0000", "#FFC000", "#FFFF00", "#92D050",
+  "#00B050", "#00B0F0", "#0070C0", "#002060", "#7030A0"
+]);
+
+function normalizeHexColor(value, fallback) {
+  const candidate = String(value || "").trim();
+  const prefixed = candidate.startsWith("#") ? candidate : "#" + candidate;
+  return /^#[0-9a-f]{6}$/i.test(prefixed) ? prefixed.toUpperCase() : fallback;
+}
+
+function themeShade(color, row) {
+  const lightness = luminance(color);
+  if (lightness > 0.86) return blend(color, "#000000", [0.06, 0.16, 0.27, 0.38, 0.52][row]);
+  if (lightness < 0.14) return blend(color, "#FFFFFF", [0.82, 0.65, 0.48, 0.30, 0.12][row]);
+  if (row < 3) return blend(color, "#FFFFFF", [0.82, 0.62, 0.38][row]);
+  return blend(color, "#000000", [0.22, 0.44][row - 3]);
+}
+
+export function buildThemeColorRows(colors = DEFAULT_POWERPOINT_THEME_COLORS) {
+  const bases = DEFAULT_POWERPOINT_THEME_COLORS.map((fallback, index) => normalizeHexColor(colors[index], fallback));
+  return [
+    bases,
+    ...Array.from({ length: 5 }, (_, row) => bases.map((color) => themeShade(color, row).toUpperCase()))
+  ];
+}
+
+export async function getPresentationThemeColors() {
+  const supported = globalThis.Office?.context?.requirements?.isSetSupported?.("PowerPointApi", "1.10");
+  if (!supported || !globalThis.PowerPoint?.run) return [...DEFAULT_POWERPOINT_THEME_COLORS];
+  try {
+    return await globalThis.PowerPoint.run(async (context) => {
+      const slide = context.presentation.getSelectedSlides().getItemAt(0);
+      const scheme = slide.themeColorScheme;
+      const results = THEME_COLOR_NAMES.map((name) => scheme.getThemeColor(name));
+      await context.sync();
+      return results.map((result, index) => normalizeHexColor(result.value, DEFAULT_POWERPOINT_THEME_COLORS[index]));
+    });
+  } catch {
+    return [...DEFAULT_POWERPOINT_THEME_COLORS];
+  }
+}
+
 export function readOfficeTheme() {
   const previewTheme = new URLSearchParams(location.search).get("theme");
   const localPreview = ["localhost", "127.0.0.1"].includes(location.hostname);

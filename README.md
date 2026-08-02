@@ -7,7 +7,7 @@ Search the full Iconify catalog, select one or more icons, and insert them into 
 - Native-looking PowerPoint task pane with automatic light/dark Office theme support
 - Full Iconify collection catalog with collection, category, palette, style, license, and grid filters
 - Multi-select with individual deselection and a clear-selection command
-- SVG/PNG toggle, insertion size, PNG resolution, icon color, and original-color preservation
+- SVG/PNG toggle, insertion size, PNG resolution, and a PowerPoint-style palette using the active slide's theme colors
 - Persistent preferences, filters, zoom, and collection selection
 - Consecutive icons are arranged in a compact grid on the slide
 - Iconify API failover endpoints and sanitized SVG markup

@@ -8,7 +8,14 @@ import {
   searchIcons
 } from "./iconify.js";
 import { loadState, normalizeState, saveState } from "./storage.js";
-import { applyOfficeTheme, insertIconsIntoPowerPoint, watchOfficeTheme } from "./powerpoint.js";
+import {
+  applyOfficeTheme,
+  buildThemeColorRows,
+  getPresentationThemeColors,
+  insertIconsIntoPowerPoint,
+  POWERPOINT_STANDARD_COLORS,
+  watchOfficeTheme
+} from "./powerpoint.js";
 
 const byId = (id) => document.getElementById(id);
 const elements = {};
@@ -27,8 +34,10 @@ function cacheElements() {
     "spinner", "resultsStatus", "filtersPanel", "resetFiltersButton", "collectionSearch",
     "allCollectionsButton", "visibleCollectionsButton", "noCollectionsButton", "collectionList",
     "categoryFilter", "paletteFilter", "styleFilter", "licenseFilter", "gridFilter", "resultLimit",
-    "previewZoom", "similarNames", "preserveSelection", "insertCount", "insertSize", "iconColor",
-    "pngResolutionField", "pngResolution", "preserveColors", "licenseLine", "insertButton", "toastRegion"
+    "previewZoom", "similarNames", "preserveSelection", "insertCount", "insertSize", "colorPickerWrap",
+    "colorButton", "colorSwatch", "colorValue", "colorPalette", "themeBaseColors", "themeShadeColors",
+    "standardColorGrid", "moreColorsButton", "customColorInput", "pngResolutionField", "pngResolution",
+    "preserveColors", "licenseLine", "insertButton", "toastRegion"
   ]) elements[id] = byId(id);
   elements.pivots = [...document.querySelectorAll(".pivot-button")];
   elements.formatButtons = [...document.querySelectorAll("[data-format]")];
@@ -67,12 +76,22 @@ function setPanel(panelId, remember = true) {
   }
 }
 
+function updateColorControl() {
+  elements.colorSwatch.style.backgroundColor = state.color;
+  elements.colorValue.textContent = state.color;
+  elements.customColorInput.value = state.color;
+  elements.colorButton.setAttribute("aria-label", "Icon color " + state.color);
+  elements.colorButton.disabled = state.preserveColors;
+  elements.colorPickerWrap.classList.toggle("is-disabled", state.preserveColors);
+  if (state.preserveColors) setColorPaletteOpen(false);
+}
+
 function applyStateToControls() {
   elements.searchInput.value = state.query;
   elements.insertSize.value = state.insertSize;
-  elements.iconColor.value = state.color;
   elements.pngResolution.value = state.pngResolution;
   elements.preserveColors.checked = state.preserveColors;
+  updateColorControl();
   elements.resultLimit.value = state.resultLimit;
   elements.previewZoom.value = state.zoom;
   elements.similarNames.checked = state.filters.similar;
@@ -107,6 +126,57 @@ function updateFilterMarker() {
   const active = collectionFiltersActive();
   elements.filterMarker.hidden = !active;
   elements.filtersTab.title = active ? "Filters are active" : "No active filters";
+}
+
+function colorSwatch(color, label) {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "palette-swatch";
+  button.dataset.color = color;
+  button.style.backgroundColor = color;
+  button.title = label + " · " + color;
+  button.setAttribute("aria-label", label + " " + color);
+  button.setAttribute("aria-pressed", String(color === state.color));
+  if (color === state.color) button.classList.add("is-selected");
+  return button;
+}
+
+function renderColorPalette(themeColors) {
+  const rows = buildThemeColorRows(themeColors);
+  elements.themeBaseColors.replaceChildren(...rows[0].map((color, index) => colorSwatch(color, "Theme color " + (index + 1))));
+  elements.themeShadeColors.replaceChildren(...rows.slice(1).flatMap((row, rowIndex) =>
+    row.map((color, columnIndex) => colorSwatch(color, "Theme color " + (columnIndex + 1) + ", shade " + (rowIndex + 1)))
+  ));
+  elements.standardColorGrid.replaceChildren(...POWERPOINT_STANDARD_COLORS.map((color, index) =>
+    colorSwatch(color, "Standard color " + (index + 1))
+  ));
+}
+
+function setColorPaletteOpen(open) {
+  const next = Boolean(open) && !state.preserveColors;
+  elements.colorPalette.hidden = !next;
+  elements.colorButton.setAttribute("aria-expanded", String(next));
+  elements.colorPickerWrap.classList.toggle("is-open", next);
+}
+
+function chooseIconColor(color) {
+  if (!/^#[0-9a-f]{6}$/i.test(color || "")) return;
+  state.color = color.toUpperCase();
+  updateColorControl();
+  const themeColors = [...elements.themeBaseColors.children].map((item) => item.dataset.color);
+  renderColorPalette(themeColors);
+  persist();
+  setColorPaletteOpen(false);
+}
+
+async function openColorPalette() {
+  const opening = elements.colorPalette.hidden;
+  setColorPaletteOpen(opening);
+  if (!opening) return;
+  elements.colorButton.classList.add("is-loading");
+  const colors = await getPresentationThemeColors();
+  if (!elements.colorPalette.hidden) renderColorPalette(colors);
+  elements.colorButton.classList.remove("is-loading");
 }
 
 function populateSelect(select, values, selectedValue, labeler = (value) => value) {
@@ -409,12 +479,25 @@ function bindEvents() {
     elements.pngResolution.value = state.pngResolution;
     persist();
   });
-  elements.iconColor.addEventListener("input", () => {
-    state.color = elements.iconColor.value.toUpperCase();
-    persist();
+  elements.colorButton.addEventListener("click", openColorPalette);
+  elements.colorPalette.addEventListener("click", (event) => {
+    const swatch = event.target.closest("[data-color]");
+    if (swatch) chooseIconColor(swatch.dataset.color);
+  });
+  elements.moreColorsButton.addEventListener("click", () => elements.customColorInput.click());
+  elements.customColorInput.addEventListener("input", () => chooseIconColor(elements.customColorInput.value));
+  document.addEventListener("pointerdown", (event) => {
+    if (!elements.colorPickerWrap.contains(event.target)) setColorPaletteOpen(false);
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !elements.colorPalette.hidden) {
+      setColorPaletteOpen(false);
+      elements.colorButton.focus();
+    }
   });
   elements.preserveColors.addEventListener("change", () => {
     state.preserveColors = elements.preserveColors.checked;
+    updateColorControl();
     persist();
   });
   elements.insertButton.addEventListener("click", insertSelected);
@@ -457,6 +540,7 @@ async function initialize() {
   cacheElements();
   state = loadState();
   applyStateToControls();
+  renderColorPalette([]);
   bindEvents();
   watchOfficeTheme(() => renderResults(resultItems));
   const host = globalThis.Office?.context?.host;
