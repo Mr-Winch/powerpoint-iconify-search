@@ -137,6 +137,8 @@ input[type="checkbox"] { width: 15px; height: 15px; accent-color: var(--office-a
 .native-color-input { position: fixed; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
 .preserve-row { min-height: 20px; }
 .license-line { min-height: 14px; color: var(--office-muted); font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.insert-actions { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px; }
+.clear-all-button { min-width: 72px; }
 .insert-button { width: 100%; }
 
 .toast-region { position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 20; pointer-events: none; }

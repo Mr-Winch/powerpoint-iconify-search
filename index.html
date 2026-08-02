@@ -42,7 +42,6 @@
           <span class="section-heading">Results</span>
           <span class="selection-summary" id="selectionSummary">No icons selected</span>
         </div>
-        <button class="subtle-button" id="clearSelectionButton" type="button" disabled>Clear</button>
       </div>
 
       <div class="icon-viewport" id="iconViewport">
@@ -173,7 +172,10 @@
       </div>
       <label class="check-row preserve-row"><input id="preserveColors" type="checkbox" /><span>Preserve original icon colors</span></label>
       <div class="license-line" id="licenseLine">Source and license details appear after selection.</div>
-      <button class="primary-button insert-button" id="insertButton" type="button" disabled>Insert icons</button>
+      <div class="insert-actions">
+        <button class="subtle-button clear-all-button" id="clearSelectionButton" type="button" disabled>Clear all</button>
+        <button class="primary-button insert-button" id="insertButton" type="button" disabled>Insert icons</button>
+      </div>
     </section>
   </main>
 
