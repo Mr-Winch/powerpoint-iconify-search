@@ -123,8 +123,11 @@ export function sanitizeSvg(svgText) {
   }
   const root = documentNode.documentElement;
   root.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-  root.removeAttribute("width");
-  root.removeAttribute("height");
+  const viewBox = (root.getAttribute("viewBox") || "0 0 24 24").trim().split(/\s+/).map(Number);
+  const width = Number.isFinite(viewBox[2]) && viewBox[2] > 0 ? viewBox[2] : 24;
+  const height = Number.isFinite(viewBox[3]) && viewBox[3] > 0 ? viewBox[3] : 24;
+  root.setAttribute("width", String(width));
+  root.setAttribute("height", String(height));
   return new XMLSerializer().serializeToString(root);
 }
 
@@ -151,7 +154,7 @@ export async function fetchIconSvg(fullName, options = {}) {
     "/" + encodeURIComponent(prefix) + "/" + encodeURIComponent(name) + ".svg" + query,
     true
   ));
-  return svg.replace("<svg ", '<svg style="color:currentColor" ');
+  return svg;
 }
 
 export function svgToBase64(svg) {
