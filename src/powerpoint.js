@@ -1,4 +1,4 @@
-import { svgToBase64, svgToPngBase64 } from "./iconify.js";
+import { svgToPngBase64 } from "./iconify.js";
 
 const FALLBACK_THEME = {
   bodyBackgroundColor: "#f5f5f5",
@@ -117,6 +117,11 @@ function setSelectedData(base64, coercionType, options) {
   });
 }
 
+export async function prepareOfficeImageData(format, svg, pngResolution) {
+  // Office XmlSvg expects the SVG XML itself. Passing Base64 can report
+  // success while creating a broken picture placeholder in PowerPoint.
+  return format === "svg" ? svg : svgToPngBase64(svg, pngResolution);
+}
 export async function insertIconsIntoPowerPoint(items, options, progress = () => {}) {
   if (!items.length) throw new Error("Select at least one icon.");
   if (!hasPowerPointHost()) {
@@ -140,10 +145,8 @@ export async function insertIconsIntoPowerPoint(items, options, progress = () =>
   for (let index = 0; index < items.length; index += 1) {
     const item = items[index];
     progress(index + 1, items.length, item);
-    const base64 = format === "svg"
-      ? svgToBase64(item.svg)
-      : await svgToPngBase64(item.svg, options.pngResolution);
-    await setSelectedData(base64, format === "svg" ? Office.CoercionType.XmlSvg : Office.CoercionType.Image, {
+    const imageData = await prepareOfficeImageData(format, item.svg, options.pngResolution);
+    await setSelectedData(imageData, format === "svg" ? Office.CoercionType.XmlSvg : Office.CoercionType.Image, {
       left: startLeft + (index % columns) * (size + gap),
       top: startTop + Math.floor(index / columns) * (size + gap),
       size
