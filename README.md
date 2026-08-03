@@ -22,7 +22,7 @@ The release installer is designed for a clean Windows computer. It does **not** 
 4. When PowerPoint opens, choose **Home > Iconify > Search Icons**.
 5. If the command has not appeared yet, choose **Home > Add-ins > Iconify Search** once.
 
-The installer works per Windows user, detects PowerPoint, checks the hosted HTTPS app, installs Microsoft Edge WebView2 if it is missing (with confirmation), registers the manifest, and opens PowerPoint. Internet access is required for Iconify searches.
+The installer works per Windows user, detects PowerPoint and WebView2, registers the manifest, and opens PowerPoint. It does not use PowerShell, bypass execution policy, download programs, or run a silent installer. If WebView2 is missing, it stops and shows Microsoft's official download address. Internet access is required for Iconify searches.
 
 To remove the add-in, double-click **Uninstall Iconify Search for PowerPoint.cmd**.
 
