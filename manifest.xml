@@ -5,7 +5,7 @@
   xmlns:ov="http://schemas.microsoft.com/office/taskpaneappversionoverrides"
   xsi:type="TaskPaneApp">
   <Id>4d5bf4c8-7851-4f6f-b595-66fc244898a4</Id>
-  <Version>0.2.0.0</Version>
+  <Version>0.2.1.0</Version>
   <ProviderName>Winton Diaz Dauhajre</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="Iconify Search"/>

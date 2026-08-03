@@ -15,17 +15,15 @@ Search the full Iconify catalog, select one or more icons, and insert them into 
 
 ## Install on Windows
 
-The release installer is designed for a clean Windows computer. It does **not** require Git, Node.js, npm, or Python.
+The release ZIP uses Office's built-in **Upload My Add-in** flow and contains no executable installer or Registry script.
 
-1. Install Microsoft PowerPoint or Microsoft 365.
-2. Download and extract the complete release ZIP.
-3. Double-click **Install Iconify Search for PowerPoint.cmd**.
-4. When PowerPoint opens, choose **Home > Iconify > Search Icons**.
-5. If the command has not appeared yet, choose **Home > Add-ins > Iconify Search** once.
+1. Extract the release ZIP.
+2. Open PowerPoint and choose **Home > Add-ins > More Add-ins**.
+3. Open **My Add-ins**, then choose **Manage My Add-ins > Upload My Add-in**.
+4. Select `manifest.xml` from the extracted folder.
+5. Choose **Home > Iconify > Search Icons**.
 
-The installer works per Windows user, detects PowerPoint and WebView2, registers the manifest, and opens PowerPoint. It does not use PowerShell, bypass execution policy, download programs, or run a silent installer. If WebView2 is missing, it stops and shows Microsoft's official download address. Internet access is required for Iconify searches.
-
-To remove the add-in, double-click **Uninstall Iconify Search for PowerPoint.cmd**.
+Some Office builds place **Upload My Add-in** under **Advanced** or **More Settings**. See `INSTALLATION.txt` in the ZIP for the same offline instructions. Internet access is required for Iconify searches.
 
 ## Development
 
