@@ -39,13 +39,15 @@ if errorlevel 1 goto failed
 
 echo  Installation complete!
 echo.
-echo  PowerPoint will now open.
-echo  Choose Home ^> Iconify ^> Search Icons.
+echo  This installer will not open PowerPoint automatically.
+echo.
+echo  1. Close this installer.
+echo  2. Open PowerPoint yourself.
+echo  3. Choose Home ^> Iconify ^> Search Icons.
 echo.
 echo  Installed in:
 echo  %TARGET_DIR%
 echo.
-start "" "%OFFICE_EXE%"
 pause
 exit /b 0
 
