@@ -1,5 +1,5 @@
-Iconify Search for PowerPoint — installation
-=========================================
+Iconify Search for PowerPoint 1.0.0 — installation
+===============================================
 
 Recommended installation
 ------------------------
