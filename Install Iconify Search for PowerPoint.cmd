@@ -1,6 +1,6 @@
 @echo off
 setlocal EnableExtensions
-title Install Iconify Search for PowerPoint v1.0.0
+title Install Iconify Search for PowerPoint v1.0.1
 
 set "ADDIN_ID=4d5bf4c8-7851-4f6f-b595-66fc244898a4"
 set "SOURCE=%~dp0manifest.xml"
@@ -10,7 +10,7 @@ set "DEV_KEY=HKCU\SOFTWARE\Microsoft\Office\16.0\Wef\Developer"
 set "OFFICE_EXE="
 
 echo.
-echo  Iconify Search for PowerPoint v1.0.0
+echo  Iconify Search for PowerPoint v1.0.1
 echo  --------------------------------
 echo.
 
