@@ -1,13 +1,13 @@
 @echo off
 setlocal EnableExtensions
-title Uninstall Iconify Search for PowerPoint v1.0.0
+title Uninstall Iconify Search for PowerPoint v1.0.1
 
 set "ADDIN_ID=4d5bf4c8-7851-4f6f-b595-66fc244898a4"
 set "TARGET_DIR=%LOCALAPPDATA%\Iconify Search for PowerPoint"
 set "DEV_KEY=HKCU\SOFTWARE\Microsoft\Office\16.0\Wef\Developer"
 
 echo.
-echo  Uninstall Iconify Search for PowerPoint v1.0.0
+echo  Uninstall Iconify Search for PowerPoint v1.0.1
 echo  ---------------------------------------
 echo.
 
